@@ -8,4 +8,3 @@ func main() {
     fmt.Scanln(&name)
     fmt.Printf("Hi, %s! I'm Go!\n", name)
 }
-
