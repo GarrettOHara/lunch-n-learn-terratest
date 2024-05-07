@@ -112,7 +112,26 @@ drwxr-x---+ 115 a206726493  staff   3.6K May  7 13:01 ../
 
 ## Exercise 1: Build and run Go code 
 
-Write your own simple Golang file or use this template file: github.com/garrettohara/lunch-n-learn-terratest/blob/main/exercise_1.go
+1. Write your own simple Go file or use this template file: \
+github.com/garrettohara/lunch-n-learn-terratest/blob/main/exercise_1.go
+
+2. Run the code: \
+    You can compile with 
+    ```
+    go build <YOUR_FILE
+    ``` 
+    and then execute with 
+    ```
+    ./<YOUR_FILE>
+    ```
+    Or just run with 
+    ```
+    go run <YOUR_FILE>
+    ```
+<br />
+3. Please clap...
+
+![please clap](https://media.giphy.com/media/MEGVADYlvKWgbOmvWX/giphy.gif)
 
 ## go mod init
 
