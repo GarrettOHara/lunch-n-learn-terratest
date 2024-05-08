@@ -1,7 +1,7 @@
 module "tags" {
   source = "git::https://github.com/sportngin/tflib-tags.git?ref=v0.1.0"
 
-  application       = var.name
+  application       = local.underscored_name
   business_vertical = "sportsengine"
   name              = var.name
   env               = "dev"
@@ -16,7 +16,8 @@ module "s3_storage" {
 }
 
 module "garrett_server" {
-  source        = "../../terraform/web-server"
+  source        = "../../terraform/web_server"
   aws_bucket_id = module.s3_storage.aws_s3_bucket_id
+  cidr_blocks   = ["10.57.0.0/16"]
   tags          = module.tags.tags
 }
