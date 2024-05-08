@@ -8,9 +8,7 @@ resource "aws_s3_bucket" "this" {
   # checkov:skip=CKV_AWS_186: No encryption needed for tests
   bucket        = "${var.name}-${random_string.random.result}"
   force_destroy = true
-  tags = {
-    Name = var.name
-  }
+  tags          = var.tags
 }
 
 # Generate random string to allow distinct S3 bucket name

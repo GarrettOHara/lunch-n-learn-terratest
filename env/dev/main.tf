@@ -12,9 +12,11 @@ module "tags" {
 module "s3_storage" {
   source = "../../terraform/storage"
   name   = "lunch-n-learn"
+  tags   = module.tags.tags
 }
 
 module "garrett_server" {
   source        = "../../terraform/web-server"
-  aws_bucket_id = s3_storage.aws_bucket_id
+  aws_bucket_id = module.s3_storage.aws_s3_bucket_id
+  tags          = module.tags.tags
 }

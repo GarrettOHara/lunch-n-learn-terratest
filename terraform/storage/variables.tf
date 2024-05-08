@@ -8,3 +8,10 @@ variable "region" {
   description = "The AWS Region"
   default     = "us-west-1"
 }
+
+variable "tags" {
+  type        = map(string)
+  description = "The tags for the module's resources."
+  default     = {}
+
+}
