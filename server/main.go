@@ -1,10 +1,10 @@
+package main
 
 import (
 	"bytes"
 	"encoding/json"
     "fmt"
     "io"
-    "io/ioutil"
     "log"
     "net/http"
     "os"
@@ -28,7 +28,7 @@ func healthCheck(w http.ResponseWriter, req *http.Request) {
 
 func queryChatBot(w http.ResponseWriter, req *http.Request) {
 	// Parse the request body
-	body, err := ioutil.ReadAll(req.Body)
+	body, err := io.ReadAll(req.Body)
 	if err != nil {
 		http.Error(w, "Error reading request body", http.StatusInternalServerError)
 		return
@@ -36,7 +36,7 @@ func queryChatBot(w http.ResponseWriter, req *http.Request) {
 
 	// Extract the text from the request
 	text := string(body)
-    prompt := map[string]string{}
+    var prompt map[string]string
 
 	// Check if the text is empty (beginning of conversation)
 	if text == "" {
@@ -71,7 +71,12 @@ func queryChatBot(w http.ResponseWriter, req *http.Request) {
 	// Set Content-Type header to application/json
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	w.Write(jsonData)
+    _, err = w.Write(jsonData)
+    if err != nil {
+        // Handle the error
+        fmt.Println("Error:", err)
+        return
+    }
 }
 
 func getCompletionFromAPI(prompt map[string]string) (string, string, error) {
@@ -82,9 +87,9 @@ func getCompletionFromAPI(prompt map[string]string) (string, string, error) {
 	apiKey := os.Getenv("CHAT_GPT_API_KEY")
 
     // Define the request body parameters
-	requestBody := map[string]interface{}{
-		"model":           "gpt-3.5-turbo-0125",
-		"messages": []map[string]string{
+	requestBody := ChatGptRequest{
+		Model:           "gpt-3.5-turbo-0125",
+        Messages: []map[string]string{
 			prompt,
 		},
 	}
@@ -119,7 +124,7 @@ func getCompletionFromAPI(prompt map[string]string) (string, string, error) {
 	}
 
     // Read the response body into a byte slice
-    body, err := ioutil.ReadAll(resp.Body)
+    body, err := io.ReadAll(resp.Body)
     if err != nil {
         return "", "", err
     }

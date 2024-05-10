@@ -6,13 +6,6 @@ type Response struct {
 	Choices []Choice `json:"choices"`
 }
 
-// Choice represents the structure of each choice in the choices list
-// type Choice struct {
-// 	Message struct {
-// 		Content string `json:"content"`
-// 	} `json:"message"`
-// }
-
 type Choice struct {
 	Index        int         `json:"index"`
 	Message      Message     `json:"message"`
@@ -29,4 +22,10 @@ type Message struct {
 type ResponseData struct {
 	ID      string `json:"id"`
 	Message string `json:"message"`
+}
+
+// ChatGptRequest represents the request body parameters
+type ChatGptRequest struct {
+	Model    string              `json:"model"`
+	Messages []map[string]string `json:"messages"`
 }
