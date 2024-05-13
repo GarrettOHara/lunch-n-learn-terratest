@@ -52,7 +52,7 @@ func queryChatBot(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-    // Handle/transform response data
+	// Handle/transform response data
 	responseData := ResponseData{
 		ID:      id,
 		Message: response,
@@ -118,8 +118,10 @@ func getCompletionFromAPI(prompt map[string]string) (string, string, error) {
 
 	// Check if the request was successful
 	if resp.StatusCode != http.StatusOK {
-		errMsg := "API request failed with status code: %d", resp.StatusCode
-        errMsg += err.Error()
+		errMsg := fmt.Sprintf("API request failed with status code: %d", resp.StatusCode)
+		if err != nil {
+			errMsg += " " + err.Error()
+		}
 		log.Println(errMsg)
 		return "", "", fmt.Errorf("%d", resp.StatusCode)
 	}

@@ -20,3 +20,6 @@ manifest.json
 
 # Ignore server logs
 *.log
+
+# Ignore VS Code
+**/.vscode/
