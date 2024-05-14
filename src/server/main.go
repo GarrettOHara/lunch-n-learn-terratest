@@ -45,14 +45,6 @@ func main() {
 	}
 	defer db.Close()
 
-	// Setup API routing
-	// http.HandleFunc("/", healthCheck)
-	// http.HandleFunc("/chatbot", queryChatBot)
-	// http.HandleFunc("/chatbot", func(w http.ResponseWriter, r *http.Request) {
-	//     queryChatBot(w, r, db) // Pass db to queryChatBot
-	// })
-	//TODO: http.HandleFunc("/getLastMessage", getLastMessage)
-
 	// Setup API routing with a router
 	router := http.NewServeMux()
 	router.HandleFunc("/", healthCheck)

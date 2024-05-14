@@ -24,11 +24,6 @@ func queryChatBotGet(w http.ResponseWriter, req *http.Request, db *sql.DB) {
 	// TOOD: add options
 	text := `Pretend to be a super young zoomer/gen z 20 year old that speaks in sentences that barley make any sense, ask for their name and then have a conversation.`
 
-	// Clean string
-	// text = strings.ReplaceAll(text, "\n", "")
-	// text = strings.ReplaceAll(text, "\t", "")
-	// text = strings.TrimSpace(text)
-
 	// Construct query
 	var prompt Query
 	prompt.Model = "gpt-3.5-turbo-0125"
@@ -127,14 +122,10 @@ func queryChatBotPost(w http.ResponseWriter, req *http.Request, db *sql.DB) {
 	// Construct query
 	var prompt Query
 	prompt.Model = "gpt-3.5-turbo-0125"
-	prompt.Messages = []Message{
-		// {Role: "user"},
-		// {Content: data.Message},
-	}
+	prompt.Messages = []Message{}
 
 	// Add all existing messages to prompt
 	prompt.Messages = append(prompt.Messages, messages...)
-	// appendMessages(&prompt, messages)
 
 	// Send request to OpenAi API
 	var request Request
@@ -163,7 +154,8 @@ func queryChatBotPost(w http.ResponseWriter, req *http.Request, db *sql.DB) {
 		http.Error(w, "Failed to encode JSON", http.StatusInternalServerError)
 		return
 	}
-	// Response back to the client request
+
+    // Response back to the client request
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	_, err = w.Write(jsonData)
