@@ -58,6 +58,7 @@ func main() {
 		}
 	})
 	//TODO: http.HandleFunc("/getLastMessage", getLastMessage)
+    // this will be for picking up cached conversations in database
 
 	// Start API on port 8080
 	log.Fatal(http.ListenAndServe(":8080", router))
