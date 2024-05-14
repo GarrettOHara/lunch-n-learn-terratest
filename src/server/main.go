@@ -1,155 +1,73 @@
 package main
 
 import (
-	"bytes"
-	"encoding/json"
-	"fmt"
-	"io"
 	"log"
+    "os"
+    "os/exec"
 	"net/http"
-	"os"
+
+    "database/sql"
+	_ "github.com/mattn/go-sqlite3"
 )
 
+func openDatabase(dbPath string) (*sql.DB, error) {
+	db, err := sql.Open("sqlite3", dbPath)
+	if err != nil {
+		return nil, err
+	}
+	return db, nil
+}
+
 func main() {
-	http.HandleFunc("/", healthCheck)
-	http.HandleFunc("/chatbot", queryChatBot)
+    // Create API log file
+    logFile, err := os.OpenFile("server.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+    if err != nil {
+        log.Fatalf("Error opening log file: %v", err)
+    }
+    defer logFile.Close()
+    log.SetOutput(logFile)
 
-	log.Fatal(http.ListenAndServe(":8080", nil))
-}
-
-func healthCheck(w http.ResponseWriter, req *http.Request) {
-	w.Header().Set("Content-Type", "text/plain")
-	w.WriteHeader(http.StatusOK)
-	if _, err := io.WriteString(w, "OK\n"); err != nil {
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		return
-	}
-}
-
-func queryChatBot(w http.ResponseWriter, req *http.Request) {
-	body, err := io.ReadAll(req.Body)
-	if err != nil {
-		http.Error(w, "Error reading request body", http.StatusInternalServerError)
-		return
-	}
-	text := string(body)
-	var prompt map[string]string
-	if text == "" {
-		text = `Pretend to be a super young zoomer/gen z 20 year
-                old that speaks in sentences that barley make any sense,
-                ask for their name and then have a conversation.`
-		prompt = map[string]string{"role": "system", "content": text}
-	} else {
-		prompt = map[string]string{"role": "user", "content": text}
-	}
-
-	// Make a request to the ChatGPT completion API
-	id, response, err := getCompletionFromAPI(prompt)
-	if err != nil {
-		errMsg := "Error getting completion from API: " + err.Error()
-		log.Println(errMsg)
-		http.Error(w, errMsg, http.StatusInternalServerError)
-		return
-	}
-
-	// Handle/transform response data
-	responseData := ResponseData{
-		ID:      id,
-		Message: response,
-	}
-	jsonData, err := json.Marshal(responseData)
-	if err != nil {
-		errMsg := "Error transforming the response data" + err.Error()
-		log.Println(errMsg)
-		http.Error(w, "Failed to encode JSON", http.StatusInternalServerError)
-		return
-	}
-
-	// Response back to the client request
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	_, err = w.Write(jsonData)
-	if err != nil {
-		errMsg := "Error responding back to client request: " + err.Error()
-		log.Println(errMsg)
-		return
-	}
-}
-
-func getCompletionFromAPI(prompt map[string]string) (string, string, error) {
-	apiEndpoint := "https://api.openai.com/v1/chat/completions"
-	apiKey := os.Getenv("CHAT_GPT_API_KEY")
-
-	// Define the request body parameters
-	requestBody := ChatGptRequest{
-		Model: "gpt-3.5-turbo-0125",
-		Messages: []map[string]string{
-			prompt,
-		},
-	}
-
-	// Encode the request body into JSON
-	jsonBody, err := json.Marshal(requestBody)
-	if err != nil {
-		errMsg := "Error encoding the request data: " + err.Error()
-		log.Println(errMsg)
-		return "", "", err
-	}
-
-	// Create a new HTTP request
-	req, err := http.NewRequest("POST", apiEndpoint, bytes.NewBuffer(jsonBody))
-	if err != nil {
-		errMsg := "Error creating the HTTP request: " + err.Error()
-		log.Println(errMsg)
-		return "", "", err
-	}
-
-	// Set the request headers
-	req.Header.Set("Authorization", "Bearer "+apiKey)
-	req.Header.Set("Content-Type", "application/json")
-
-	// Make the HTTP request
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		return "", "", err
-	}
-	defer resp.Body.Close()
-
-	// Check if the request was successful
-	if resp.StatusCode != http.StatusOK {
-		errMsg := fmt.Sprintf("API request failed with status code: %d", resp.StatusCode)
+    // Check if the database file exists
+	if _, err := os.Stat("chat.db"); os.IsNotExist(err) {
+		// Execute the bash script to create the database
+		cmd := exec.Command("bash", "create_database.sh")
+		output, err := cmd.Output()
 		if err != nil {
-			errMsg += " " + err.Error()
+			log.Fatalf("Error executing script: %v\n", err)
 		}
-		log.Println(errMsg)
-		return "", "", fmt.Errorf("%d", resp.StatusCode)
+		log.Printf("%s", output)
 	}
 
-	// Read the response body into a byte slice
-	body, err := io.ReadAll(resp.Body)
+    // Create db connection
+    db, err := openDatabase("chat.db")
 	if err != nil {
-		errMsg := "Error reading the response body from Chat GPT API: " + err.Error()
-		log.Println(errMsg)
-		return "", "", err
+		log.Fatal(err)
 	}
+	defer db.Close()
 
-	// Unmarshal the JSON into the Response struct
-	var response Response
-	if err := json.Unmarshal(body, &response); err != nil {
-		fmt.Println("Error:", err)
-		return "", "", err
-	}
 
-	// Extract the ID
-	id := response.ID
-	var lastMessageContent string
-	lastChoiceIndex := len(response.Choices) - 1
-	if lastChoiceIndex >= 0 {
-		lastMessageContent = response.Choices[lastChoiceIndex].Message.Content
-	} else {
-		return "", "", nil
-	}
+    // Setup API routing
+	// http.HandleFunc("/", healthCheck)
+	// http.HandleFunc("/chatbot", queryChatBot)
+    // http.HandleFunc("/chatbot", func(w http.ResponseWriter, r *http.Request) {
+    //     queryChatBot(w, r, db) // Pass db to queryChatBot
+    // })
+    //TODO: http.HandleFunc("/getLastMessage", getLastMessage)
 
-	return id, lastMessageContent, nil
+    // Setup API routing with a router
+    router := http.NewServeMux()
+    router.HandleFunc("/", healthCheck)
+    router.HandleFunc("/chatbot", func(w http.ResponseWriter, r *http.Request) {
+        if r.Method == http.MethodGet {
+            queryChatBotGet(w, r, db)
+        } else if r.Method == http.MethodPost {
+            queryChatBotPost(w, r, db)
+        } else {
+            http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+        }
+    })
+    //TODO: http.HandleFunc("/getLastMessage", getLastMessage)
+
+    // Start API on port 8080
+	log.Fatal(http.ListenAndServe(":8080", router))
 }

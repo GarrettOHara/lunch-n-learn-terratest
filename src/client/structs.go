@@ -1,6 +1,7 @@
 package main
 
-type Response struct {
-	ID      string `json:"id"`
+type Request struct {
+	Id      string `json:"id"`
 	Message string `json:"message"`
+    Role    string `json:"role"`
 }

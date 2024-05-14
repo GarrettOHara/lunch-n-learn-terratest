@@ -5,22 +5,23 @@ DATABASE="chat.db"
 
 # Check if the database file already exists
 if [ ! -f "$DATABASE" ]; then
-    # Create SQLite database file
-    touch "$DATABASE"
-    echo "SQLite database '$DATABASE' created."
+	# Create SQLite database file
+	touch "$DATABASE"
+	echo "SQLite database '$DATABASE' created."
 else
-    echo "SQLite database '$DATABASE' already exists."
-    exit 0
+	echo "SQLite database '$DATABASE' already exists."
+	exit 0
 fi
 
 # SQLite commands to create table
 sqlite3 "$DATABASE" <<EOF
-CREATE TABLE IF NOT EXISTS conversations (
+CREATE TABLE conversations (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     message BLOB,
-    conversationId TEXT
+    conversationId TEXT,
+    role TEXT,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 EOF
 
 echo "Table 'conversations' created in '$DATABASE'."
-

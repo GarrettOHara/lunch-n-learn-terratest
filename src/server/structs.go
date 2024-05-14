@@ -1,7 +1,7 @@
 package main
 
 type Response struct {
-	ID      string   `json:"id"`
+	Id      string   `json:"id"`
 	Choices []Choice `json:"choices"`
 }
 
@@ -17,12 +17,13 @@ type Message struct {
 	Content string `json:"content"`
 }
 
-type ResponseData struct {
-	ID      string `json:"id"`
+type Request struct {
+	Id      string `json:"id"`
 	Message string `json:"message"`
+    Role    string `json:"role"`
 }
 
-type ChatGptRequest struct {
-	Model    string              `json:"model"`
-	Messages []map[string]string `json:"messages"`
+type Query struct {
+	Model    string    `json:"model"`
+	Messages []Message `json:"messages"`
 }
