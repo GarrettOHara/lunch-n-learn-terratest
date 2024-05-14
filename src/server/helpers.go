@@ -2,8 +2,8 @@ package main
 
 import (
 	"bytes"
+	"database/sql"
 	"encoding/json"
-    "database/sql"
 	"fmt"
 	"io"
 	"log"
@@ -38,17 +38,17 @@ func retrieveMessages(id string, db *sql.DB) ([]Message, error) {
 		return nil, err
 	}
 
-    fmt.Println("Dumping contents from retrieveMessages:")
-    for _, msg := range messages {
-        fmt.Printf("Role: %s, Content: %s\n", msg.Role, msg.Content)
-    }
+	fmt.Println("Dumping contents from retrieveMessages:")
+	for _, msg := range messages {
+		fmt.Printf("Role: %s, Content: %s\n", msg.Role, msg.Content)
+	}
 
 	// Return the retrieved messages
 	return messages, nil
 }
 
 func storeMessage(data Request, db *sql.DB) (bool, error) {
-    // Prepare the SQL statement
+	// Prepare the SQL statement
 	stmt, err := db.Prepare(`INSERT INTO conversations (message, conversationId, role) VALUES (?, ?, ?);`)
 	if err != nil {
 		return false, err
@@ -58,11 +58,11 @@ func storeMessage(data Request, db *sql.DB) (bool, error) {
 	// Execute the SQL statement with the response values
 	_, err = stmt.Exec(data.Message, data.Id, data.Role)
 	if err != nil {
-        log.Printf("Error storing message: %v", err)
-        return false, err
+		log.Printf("Error storing message: %v", err)
+		return false, err
 	}
 
-    log.Printf("Logged new conversation: %v", data)
+	log.Printf("Logged new conversation: %v", data)
 	return true, nil
 }
 
@@ -70,14 +70,14 @@ func getCompletionFromOpenAi(prompt Query) (Request, error) {
 	apiEndpoint := "https://api.openai.com/v1/chat/completions"
 	apiKey := os.Getenv("CHAT_GPT_API_KEY")
 
-    // Encode the request body into JSON
+	// Encode the request body into JSON
 	jsonBody, err := json.Marshal(prompt)
 	if err != nil {
 		errMsg := "Error encoding the request data: " + err.Error()
 		log.Println(errMsg)
 		return Request{}, err
 	}
-    fmt.Println("String-ified json data for Open AI API request: ", string(jsonBody))
+	fmt.Println("String-ified json data for Open AI API request: ", string(jsonBody))
 
 	// Create a new HTTP request
 	req, err := http.NewRequest("POST", apiEndpoint, bytes.NewBuffer(jsonBody))
@@ -116,8 +116,8 @@ func getCompletionFromOpenAi(prompt Query) (Request, error) {
 		log.Println(errMsg)
 		return Request{}, err
 	}
-    // Log API response
-    log.Print(string(body))
+	// Log API response
+	log.Print(string(body))
 
 	// Unmarshal the JSON into the Response struct
 	var response Response
@@ -134,11 +134,10 @@ func getCompletionFromOpenAi(prompt Query) (Request, error) {
 		return Request{}, nil
 	}
 
-    request := Request{
-        Id: response.Id,
-        Message: lastMessageContent,
-        Role: "assistant",
-    }
+	request := Request{
+		Id:      response.Id,
+		Message: lastMessageContent,
+		Role:    "assistant",
+	}
 	return request, nil
 }
-

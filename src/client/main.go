@@ -31,7 +31,7 @@ func handleConversationIdCache() string {
 }
 
 func cacheConversationId(body []byte) {
-    file, err := os.OpenFile(".lastConversationId", os.O_WRONLY|os.O_CREATE, 0644)
+	file, err := os.OpenFile(".lastConversationId", os.O_WRONLY|os.O_CREATE, 0644)
 	if err != nil {
 		log.Printf("Error writing to file: %v", err)
 		return
@@ -42,7 +42,7 @@ func cacheConversationId(body []byte) {
 		log.Printf("Error unmarshalling request body: %v", err)
 		return
 	}
-    _, err = file.Write([]byte(request.Id))
+	_, err = file.Write([]byte(request.Id))
 	if err != nil {
 		log.Printf("Error writing to file: %v", err)
 		return
@@ -50,20 +50,20 @@ func cacheConversationId(body []byte) {
 }
 
 func startNewConversation() ([]byte, error) {
-    res, err := http.Get("http://localhost:8080/chatbot")
+	res, err := http.Get("http://localhost:8080/chatbot")
 	if err != nil {
 		log.Printf("Error sending initial GET request: %v", err)
 		return nil, err
 	}
 	defer res.Body.Close()
 
-    // Convert to byte array
+	// Convert to byte array
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
 		log.Printf("Error reading response body: %v", err)
 		return nil, err
 	}
-    cacheConversationId(body)
+	cacheConversationId(body)
 
 	return body, nil
 }
@@ -112,7 +112,7 @@ func handleConversation(conversationId string) {
 				requestData := Request{
 					Id:      conversationId,
 					Message: userInput,
-                    Role:    "user",
+					Role:    "user",
 				}
 				// Marshal the Request object into JSON format
 				jsonData, err := json.Marshal(requestData)
@@ -134,8 +134,8 @@ func handleConversation(conversationId string) {
 					log.Printf("Error reading response body: %v", err)
 					continue
 				}
-                fmt.Println("Response from POST reqeuest:")
-                fmt.Println(string(body))
+				fmt.Println("Response from POST reqeuest:")
+				fmt.Println(string(body))
 
 				// Format and print to CLI
 				_ = handleRequest(body, false)
@@ -169,10 +169,10 @@ func handleRequest(body []byte, initial bool) Request {
 func main() {
 	var body []byte
 	var err error
-    body, err = startNewConversation()
-    if err != nil {
-        return
-    }
+	body, err = startNewConversation()
+	if err != nil {
+		return
+	}
 	// conversationId := handleConversationIdCache()
 	// if conversationId == "" {
 	// 	body, err = startNewConversation()

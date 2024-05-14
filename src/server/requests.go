@@ -1,13 +1,13 @@
 package main
 
 import (
-    "fmt"
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
-    "strings"
+	"strings"
 )
 
 func healthCheck(w http.ResponseWriter, req *http.Request) {
@@ -24,22 +24,22 @@ func queryChatBotGet(w http.ResponseWriter, req *http.Request, db *sql.DB) {
 	// TOOD: add options
 	text := `Pretend to be a super young zoomer/gen z 20 year old that speaks in sentences that barley make any sense, ask for their name and then have a conversation.`
 
-    // Clean string
-    // text = strings.ReplaceAll(text, "\n", "")
-    // text = strings.ReplaceAll(text, "\t", "")
-    // text = strings.TrimSpace(text)
+	// Clean string
+	// text = strings.ReplaceAll(text, "\n", "")
+	// text = strings.ReplaceAll(text, "\t", "")
+	// text = strings.TrimSpace(text)
 
-    // Construct query
-    var prompt Query
-    prompt.Model = "gpt-3.5-turbo-0125"
-    prompt.Messages = []Message{
-        {Role: "user", Content: text},
-    }
-    fmt.Printf("%+v\n", prompt)
+	// Construct query
+	var prompt Query
+	prompt.Model = "gpt-3.5-turbo-0125"
+	prompt.Messages = []Message{
+		{Role: "user", Content: text},
+	}
+	fmt.Printf("%+v\n", prompt)
 
 	// Send request to OpenAi API
-    var request Request
-    var err error
+	var request Request
+	var err error
 	request, err = getCompletionFromOpenAi(prompt)
 	if err != nil {
 		errMsg := "Error getting completion from API: " + err.Error()
@@ -48,29 +48,29 @@ func queryChatBotGet(w http.ResponseWriter, req *http.Request, db *sql.DB) {
 		return
 	}
 
-    save_response := request.Message
-    request.Message = text
-    request.Role = "user"
-    // Store user prompt message in database
+	save_response := request.Message
+	request.Message = text
+	request.Role = "user"
+	// Store user prompt message in database
 	_, err = storeMessage(request, db)
-    if err != nil {
-        errMsg := "Error saving chat gpt response to database: " + err.Error()
+	if err != nil {
+		errMsg := "Error saving chat gpt response to database: " + err.Error()
 		log.Println(errMsg)
 		http.Error(w, errMsg, http.StatusInternalServerError)
 		return
-    }
-    request.Message = save_response
-    request.Role = "assistant"
-    // Store chat gpt response message in database
+	}
+	request.Message = save_response
+	request.Role = "assistant"
+	// Store chat gpt response message in database
 	_, err = storeMessage(request, db)
-    if err != nil {
-        errMsg := "Error saving chat gpt response to database: " + err.Error()
+	if err != nil {
+		errMsg := "Error saving chat gpt response to database: " + err.Error()
 		log.Println(errMsg)
 		http.Error(w, errMsg, http.StatusInternalServerError)
 		return
-    }
-	
-    // Handle/transform response data
+	}
+
+	// Handle/transform response data
 	jsonData, err := json.Marshal(request)
 	if err != nil {
 		errMsg := "Error transforming the response data" + err.Error()
@@ -96,48 +96,48 @@ func queryChatBotPost(w http.ResponseWriter, req *http.Request, db *sql.DB) {
 		return
 	}
 	// Extract data from http request
-    var data Request
-    err = json.Unmarshal(body, &data)
+	var data Request
+	err = json.Unmarshal(body, &data)
 	if err != nil {
 		http.Error(w, "Error parsing request body", http.StatusBadRequest)
 		return
 	}
 
-    // Clean string
-    data.Message = strings.ReplaceAll(data.Message, "\n", "")
-    data.Message = strings.ReplaceAll(data.Message, "\t", "")
+	// Clean string
+	data.Message = strings.ReplaceAll(data.Message, "\n", "")
+	data.Message = strings.ReplaceAll(data.Message, "\t", "")
 
-    // Append user input to conversation list
+	// Append user input to conversation list
 	_, err = storeMessage(data, db)
-    if err != nil {
-        errMsg := "Error saving chat gpt response to database: " + err.Error()
+	if err != nil {
+		errMsg := "Error saving chat gpt response to database: " + err.Error()
 		log.Println(errMsg)
 		http.Error(w, errMsg, http.StatusInternalServerError)
 		return
-    }
+	}
 
-    // Grab conversation history from sqlite
-    var messages []Message
-    messages, err = retrieveMessages(data.Id, db)
-    if err != nil {
-        log.Printf("Error when retreiveing messages from database: %v", err)
-        return
-    }
+	// Grab conversation history from sqlite
+	var messages []Message
+	messages, err = retrieveMessages(data.Id, db)
+	if err != nil {
+		log.Printf("Error when retreiveing messages from database: %v", err)
+		return
+	}
 
-    // Construct query
-    var prompt Query
-    prompt.Model = "gpt-3.5-turbo-0125"
-    prompt.Messages = []Message{
-        // {Role: "user"},
-        // {Content: data.Message},
-    }
+	// Construct query
+	var prompt Query
+	prompt.Model = "gpt-3.5-turbo-0125"
+	prompt.Messages = []Message{
+		// {Role: "user"},
+		// {Content: data.Message},
+	}
 
-    // Add all existing messages to prompt
-    prompt.Messages = append(prompt.Messages, messages...)
-    // appendMessages(&prompt, messages)
+	// Add all existing messages to prompt
+	prompt.Messages = append(prompt.Messages, messages...)
+	// appendMessages(&prompt, messages)
 
 	// Send request to OpenAi API
-    var request Request
+	var request Request
 	request, err = getCompletionFromOpenAi(prompt)
 	if err != nil {
 		errMsg := "Error getting completion from API: " + err.Error()
@@ -146,16 +146,16 @@ func queryChatBotPost(w http.ResponseWriter, req *http.Request, db *sql.DB) {
 		return
 	}
 
-    // Append chat gpt response to conversation list
+	// Append chat gpt response to conversation list
 	_, err = storeMessage(request, db)
-    if err != nil {
-        errMsg := "Error saving chat gpt response to database: " + err.Error()
+	if err != nil {
+		errMsg := "Error saving chat gpt response to database: " + err.Error()
 		log.Println(errMsg)
 		http.Error(w, errMsg, http.StatusInternalServerError)
 		return
-    }
-	
-    // Handle/transform request data
+	}
+
+	// Handle/transform request data
 	jsonData, err := json.Marshal(request)
 	if err != nil {
 		errMsg := "Error transforming the response data" + err.Error()
