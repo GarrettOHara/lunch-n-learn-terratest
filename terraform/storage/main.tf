@@ -47,15 +47,19 @@ resource "aws_s3_object" "app_html_template" {
 
 resource "aws_s3_bucket_policy" "this" {
   count  = var.static_website ? 1 : 0
-  bucket = aws_s3_bucket.example.id
-  policy = data.aws_iam_policy_document.this.json
+  bucket = aws_s3_bucket.this.id
+  policy = data.aws_iam_policy_document.this[0].json
 }
 
 data "aws_iam_policy_document" "this" {
   count = var.static_website ? 1 : 0
   statement {
     actions   = ["s3:GetObject"]
-    resources = [aws_s3_bucket.my_bucket.arn]
+    resources = ["${aws_s3_bucket.this.arn}/*"]
+    principals {
+      type        = "AWS"
+      identifiers = ["*"]
+    }
 
     # Restrict access to specific IP range
     condition {

@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestS3Bucket(t *testing.T) {
+func TestWebServer(t *testing.T) {
 	// Generate a 6-character random string
 	randomID := random.UniqueId()
 	// Use the random ID and terratest prefix to generate a random name
@@ -22,7 +22,7 @@ func TestS3Bucket(t *testing.T) {
 	//
 	// Enables us to deploy multiple clusters from the same root-level
 	// configuration with different parameters in parallel.
-	workingDir := test_structure.CopyTerraformFolderToTemp(t, "..", "examples/complete")
+	workingDir := test_structure.CopyTerraformFolderToTemp(t, "..", "examples/web_server")
 
 	testName := t.Name()
 	bucketName := fmt.Sprintf("terratest-lunch-n-learn/%s/us-west-1/%s.tfstate", testName, name)
@@ -39,6 +39,12 @@ func TestS3Bucket(t *testing.T) {
 	defer terraform.Destroy(t, terraformOptions)
 	terraform.InitAndApply(t, terraformOptions)
 
-	s3BucketARN := terraform.Output(t, terraformOptions, "s3_bucket_arn")
-	assert.NotEmpty(t, s3BucketARN, "S3 bucket ARN should not be empty")
+	instance_id := terraform.Output(t, terraformOptions, "instance_id")
+	public_ipv4 := terraform.Output(t, terraformOptions, "public_ipv4_addr")
+	public_dns := terraform.Output(t, terraformOptions, "public_dns")
+
+    // Ensure outputs are all non-empty
+	assert.NotEmpty(t, instance_id, "instance_id should not be empty")
+	assert.NotEmpty(t, public_ipv4, "public_ipv4 should not be empty")
+	assert.NotEmpty(t, public_dns, "public_dns should not be empty")
 }
