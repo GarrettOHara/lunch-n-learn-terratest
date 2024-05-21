@@ -1,8 +1,7 @@
 module "web_server" {
-  source = "../../../terraform/web_server/"
+  source      = "../../../terraform/web_server/"
   cidr_blocks = ["10.57.0.0/16"]
-  name = var.name
-
+  name        = var.name
 }
 
 variable "name" {

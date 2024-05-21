@@ -1,8 +1,3 @@
-variable "aws_bucket_id" {
-  type        = string
-  description = "The ID of the S3 bucket that stores the web server files."
-}
-
 variable "cidr_blocks" {
   type        = list(string)
   description = "The CIDR range of the ingress web traffic"

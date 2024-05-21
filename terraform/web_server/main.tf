@@ -61,8 +61,8 @@ resource "aws_iam_role" "this" {
           Action = ["s3:*"]
           Effect = "Allow"
           Resource = [
-            "arn:aws:s3:::${var.aws_bucket_id}",
-            "arn:aws:s3:::${var.aws_bucket_id}/*"
+            "arn:aws:s3:::${aws_s3_bucket.this.id}",
+            "arn:aws:s3:::${aws_s3_bucket.this.id}/*"
           ]
         }
       ]
