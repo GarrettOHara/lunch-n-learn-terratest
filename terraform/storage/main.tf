@@ -30,10 +30,10 @@ resource "aws_s3_bucket_ownership_controls" "this" {
 resource "aws_s3_bucket_public_access_block" "this" {
   bucket = aws_s3_bucket.this.id
 
-  block_public_acls       = true
-  block_public_policy     = true
-  ignore_public_acls      = true
-  restrict_public_buckets = true
+  block_public_acls       = var.static_website
+  block_public_policy     = var.static_website
+  ignore_public_acls      = var.static_website
+  restrict_public_buckets = var.static_website
 }
 
 resource "aws_s3_object" "app_html_template" {
@@ -65,7 +65,10 @@ data "aws_iam_policy_document" "this" {
     condition {
       test     = "IpAddress"
       variable = "aws:SourceIp"
-      values   = ["10.57.0.0/16"]
+      values = [
+        "165.1.165.11/32",
+        # Add all Public IPv4 VPN here
+      ]
     }
   }
 }
