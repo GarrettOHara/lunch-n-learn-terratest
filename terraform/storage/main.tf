@@ -38,11 +38,12 @@ resource "aws_s3_bucket_public_access_block" "this" {
 
 resource "aws_s3_object" "app_html_template" {
   # checkov:skip=CKV_AWS_186: No encrpytion required for non sensitive files
-  count       = var.static_website ? 1 : 0
-  bucket      = aws_s3_bucket.this.id
-  key         = "index.html"
-  source      = "${path.module}/index.html"
-  source_hash = filemd5("${path.module}/index.html")
+  count        = var.static_website ? 1 : 0
+  bucket       = aws_s3_bucket.this.id
+  content_type = "text/html"
+  key          = "index.html"
+  source       = "${path.module}/index.html"
+  source_hash  = filemd5("${path.module}/index.html")
 }
 
 resource "aws_s3_bucket_policy" "this" {
@@ -70,5 +71,13 @@ data "aws_iam_policy_document" "this" {
         # Add all Public IPv4 VPN here
       ]
     }
+  }
+}
+
+resource "aws_s3_bucket_website_configuration" "this" {
+  bucket = aws_s3_bucket.this.id
+
+  index_document {
+    suffix = "index.html"
   }
 }

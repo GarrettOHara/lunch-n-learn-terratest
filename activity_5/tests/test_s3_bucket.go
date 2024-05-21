@@ -44,4 +44,6 @@ func TestS3Bucket(t *testing.T) {
 
 	s3BucketARN := terraform.Output(t, terraformOptions, "s3_bucket_arn")
 	assert.NotEmpty(t, s3BucketARN, "S3 bucket ARN should not be empty")
+
+    // TODO: send a curl request to the S3 bucket to fetch the object
 }
