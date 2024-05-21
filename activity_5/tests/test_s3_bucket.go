@@ -12,6 +12,9 @@ import (
 )
 
 func TestS3Bucket(t *testing.T) {
+    // Allow test to run in parrallel with other tests
+    t.parrallel()
+
 	// Generate a 6-character random string
 	randomID := random.UniqueId()
 	// Use the random ID and terratest prefix to generate a random name

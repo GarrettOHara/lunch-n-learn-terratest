@@ -36,32 +36,20 @@ resource "aws_s3_bucket_public_access_block" "this" {
   restrict_public_buckets = true
 }
 
-resource "aws_s3_object" "app_html_template" {
+resource "aws_s3_object" "app_source_code" {
   # checkov:skip=CKV_AWS_186: No encrpytion required for non sensitive files
-  count       = var.static_website ? 1 : 0
   bucket      = aws_s3_bucket.this.id
-  key         = "index.html"
-  source      = "${path.module}/index.html"
-  source_hash = filemd5("${path.module}/index.html")
+  key         = "main.go"
+  source      = "${path.module}/../../server/main.go"
+  source_hash = filemd5("${path.module}/../../server/main.go")
 }
 
-resource "aws_s3_bucket_policy" "this" {
-  count  = var.static_website ? 1 : 0
-  bucket = aws_s3_bucket.example.id
-  policy = data.aws_iam_policy_document.this.json
-}
+resource "aws_s3_object" "app_html_templates" {
+  # checkov:skip=CKV_AWS_186: No encrpytion required for non sensitive files
+  for_each = toset([for file in fileset("${path.module}/../../server/templates", "**") : file])
 
-data "aws_iam_policy_document" "this" {
-  count = var.static_website ? 1 : 0
-  statement {
-    actions   = ["s3:GetObject"]
-    resources = [aws_s3_bucket.my_bucket.arn]
-
-    # Restrict access to specific IP range
-    condition {
-      test     = "IpAddress"
-      variable = "aws:SourceIp"
-      values   = ["10.57.0.0/16"]
-    }
-  }
+  bucket      = aws_s3_bucket.this.id
+  key         = "templates/${each.value}"
+  source      = "${path.module}/../../server/templates/${each.value}"
+  source_hash = filemd5("${path.module}/../../server/templates/${each.value}")
 }

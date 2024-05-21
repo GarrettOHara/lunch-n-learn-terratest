@@ -1,14 +1,15 @@
 module "s3_bucket" {
-    name = var.name
+  source = "../../../terraform/storage"
+  name   = var.name
 }
 
 variable "name" {
   type        = string
-  description = "The name of the project"
+  description = "The name of the project."
   default     = "super-cool-bucket"
 }
 
-output "s3_bucket_arn" {
-  description = "The ARN of the S3 bucket."
-  value       = try(module.s3_bucket.s3_bucket_arn, "")
+output "s3_bucket_id" {
+  description = "The ID of the S3 bucket."
+  value       = try(module.s3_bucket.aws_s3_bucket_id, "")
 }
