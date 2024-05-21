@@ -38,18 +38,19 @@ resource "aws_s3_bucket_public_access_block" "this" {
 
 resource "aws_s3_object" "app_source_code" {
   # checkov:skip=CKV_AWS_186: No encrpytion required for non sensitive files
+  for_each    = toset([for file in fileset("${path.module}/../../src/server", "**") : file])
   bucket      = aws_s3_bucket.this.id
-  key         = "main.go"
-  source      = "${path.module}/../../server/main.go"
-  source_hash = filemd5("${path.module}/../../server/main.go")
+  key         = each.value
+  source      = "${path.module}/../../src/server/${each.value}"
+  source_hash = filemd5("${path.module}/../../src/server/${each.value}")
 }
 
 resource "aws_s3_object" "app_html_templates" {
   # checkov:skip=CKV_AWS_186: No encrpytion required for non sensitive files
-  for_each = toset([for file in fileset("${path.module}/../../server/templates", "**") : file])
+  for_each = toset([for file in fileset("${path.module}/../../src/server/templates", "**") : file])
 
   bucket      = aws_s3_bucket.this.id
   key         = "templates/${each.value}"
-  source      = "${path.module}/../../server/templates/${each.value}"
-  source_hash = filemd5("${path.module}/../../server/templates/${each.value}")
+  source      = "${path.module}/../../src/server/templates/${each.value}"
+  source_hash = filemd5("${path.module}/../../src/server/templates/${each.value}")
 }

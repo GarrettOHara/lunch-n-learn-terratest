@@ -66,10 +66,7 @@ data "aws_iam_policy_document" "this" {
     condition {
       test     = "IpAddress"
       variable = "aws:SourceIp"
-      values = [
-        "165.1.165.11/32",
-        # Add all Public IPv4 VPN here
-      ]
+      values   = var.static_website_CIDR
     }
   }
 }

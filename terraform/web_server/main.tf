@@ -12,7 +12,7 @@ resource "aws_instance" "this" {
   root_block_device {
     encrypted = true
   }
-  user_data                   = file("${path.module}/user-data.sh")
+  user_data                   = data.template_file.user_data_template.rendered
   user_data_replace_on_change = true
   vpc_security_group_ids = [
     aws_security_group.allow_software_updates.id,

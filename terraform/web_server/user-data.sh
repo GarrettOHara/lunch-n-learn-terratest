@@ -6,11 +6,18 @@ sudo su
 # Update system
 yum update -y
 
-# Install Python 3, pip, cloudwatch logs agent, collectd for system logs
-yum install -y python3 python3-pip amazon-cloudwatch-agent jq
+# Install cloudwatch logs agent, collectd for system logs
+yum install -y amazon-cloudwatch-agent jq
 
-# Install dependencies
-pip3 install flask gunicorn
+# Install Golang
+wget https://go.dev/dl/go1.22.3.linux-amd64.tar.gz
+tar -xvf go1.22.3.linux-amd64.tar.gz
+mv go /usr/local
+
+# Configure Go environment
+export GOROOT=/usr/local/go
+export GOPATH=/home/ec2-user
+export PATH=$GOPATH/bin:$GOROOT/bin:$PATH
 
 # Install aws-cli
 curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
@@ -18,21 +25,20 @@ unzip awscliv2.zip
 sudo ./aws/install --bin-dir /usr/local/bin --install-dir /usr/local/aws-cli --update
 
 # Fetch application code
-/usr/local/bin/aws s3 cp s3://${s3_bucket} /home/ec2-user/ --recursive
-chmod +x /home/ec2-user/app.py
+mkdir -p /home/ec2-user/src/server
+/usr/local/bin/aws s3 cp s3://${s3_bucket} /home/ec2-user/src/server --recursive
+# nohup /usr/local/go/bin/go run server &
 
 # Setup Web Server to run as daemon process
 echo '
 [Unit]
-Description=Gunicorn instance for a simple web server
+Description=Go web server
 After=network.target
 
 [Service]
-User=root
-Group=root
-WorkingDirectory=/home/ec2-user
-ExecStart=/usr/local/bin/gunicorn -b 0.0.0.0:80 app:app
-
+Type=simple
+WorkingDirectory=/home/ec2-user/src/server
+ExecStart=/usr/local/go/bin/go run server
 Restart=always
 
 [Install]
@@ -42,14 +48,14 @@ WantedBy=multi-user.target
 # Reload daemon processes
 systemctl daemon-reload
 
-# Start web server
-systemctl start web-server
-
-# Enable daemon in systemd to run on startup
-systemctl enable web-server
-
-# Print status to logfile: /var/log/cloud-init-output.log
-systemctl status web-server
+# # Start web server
+# systemctl start web-server
+#
+# # Enable daemon in systemd to run on startup
+# systemctl enable web-server
+#
+# # Print status to logfile: /var/log/cloud-init-output.log
+# systemctl status web-server
 
 # Fetch cloudwatch log configuration
 /usr/local/bin/aws ssm get-parameter --name "${ssm_parameter}" --region us-west-1 | jq -r '.Parameter.Value | fromjson' >/opt/aws/amazon-cloudwatch-agent/bin/config.json

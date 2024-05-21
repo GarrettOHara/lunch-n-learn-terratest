@@ -15,6 +15,12 @@ variable "static_website" {
   default     = false
 }
 
+variable "static_website_CIDR" {
+  type        = list(string)
+  description = "A list of valid CIDR ranges to serve content to."
+  default     = [""]
+}
+
 variable "tags" {
   type        = map(string)
   description = "The tags for the module's resources."
