@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/gruntwork-io/terratest/modules/aws"
 	"github.com/gruntwork-io/terratest/modules/random"
 	"github.com/gruntwork-io/terratest/modules/terraform"
 	test_structure "github.com/gruntwork-io/terratest/modules/test-structure"
@@ -45,5 +44,5 @@ func TestS3Bucket(t *testing.T) {
 	s3BucketARN := terraform.Output(t, terraformOptions, "s3_bucket_arn")
 	assert.NotEmpty(t, s3BucketARN, "S3 bucket ARN should not be empty")
 
-    // TODO: send a curl request to the S3 bucket to fetch the object
+    // TODO: send a request to the S3 bucket to fetch the object
 }
