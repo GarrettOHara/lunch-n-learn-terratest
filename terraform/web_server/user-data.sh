@@ -27,7 +27,8 @@ sudo ./aws/install --bin-dir /usr/local/bin --install-dir /usr/local/aws-cli --u
 # Fetch application code
 mkdir -p /home/ec2-user/src/server
 /usr/local/bin/aws s3 cp s3://${s3_bucket} /home/ec2-user/src/server --recursive
-# nohup /usr/local/go/bin/go run server &
+cd /home/ec2-user/src/server
+/usr/local/go/bin/go build server
 
 # Setup Web Server to run as daemon process
 echo '
@@ -37,9 +38,10 @@ After=network.target
 
 [Service]
 Type=simple
+ExecStart=/home/ec2-user/src/server/server
 WorkingDirectory=/home/ec2-user/src/server
-ExecStart=/usr/local/go/bin/go run server
 Restart=always
+RestartSec=3
 
 [Install]
 WantedBy=multi-user.target
@@ -48,14 +50,14 @@ WantedBy=multi-user.target
 # Reload daemon processes
 systemctl daemon-reload
 
-# # Start web server
-# systemctl start web-server
-#
-# # Enable daemon in systemd to run on startup
-# systemctl enable web-server
-#
-# # Print status to logfile: /var/log/cloud-init-output.log
-# systemctl status web-server
+# Start web server
+systemctl start web-server
+
+# Enable daemon in systemd to run on startup
+systemctl enable web-server
+
+# Print status to logfile: /var/log/cloud-init-output.log
+systemctl status web-server
 
 # Fetch cloudwatch log configuration
 /usr/local/bin/aws ssm get-parameter --name "${ssm_parameter}" --region us-west-1 | jq -r '.Parameter.Value | fromjson' >/opt/aws/amazon-cloudwatch-agent/bin/config.json

@@ -1,7 +1,19 @@
 module "web_server" {
-  source      = "../../../terraform/web_server/"
-  cidr_blocks = ["10.57.0.0/16"]
-  name        = var.name
+  source = "../../../terraform/web_server/"
+  name   = var.name
+
+  cidr_blocks = [
+    "165.1.165.11/32",   # My VPN IP
+    "50.232.111.124/32", # SE HQ Corp employee wired and wireless
+    "67.130.26.171/32",
+    "137.83.201.101/32", # SE Global Protect Cloud Service (GPCS) US East
+    "137.83.201.167/32",
+    "54.67.50.109/32", # SE Global Protect Cloud Service (GPCS) US West
+    "13.52.120.179/32",
+    "50.228.144.140/32", # NBC Global Protect Contractor VPN US East
+    "50.228.144.124/32",
+    "50.230.144.156/32", # NBC Global Protect Contractor VPN US West
+  ]
 }
 
 variable "name" {

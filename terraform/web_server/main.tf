@@ -137,45 +137,45 @@ resource "aws_iam_instance_profile" "this" {
   }
 }
 
-resource "aws_security_group" "allow_software_updates" {
-  name        = var.name
-  description = "Allow software updates"
-
-  egress {
-    description = "HTTPS for updates"
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
-    description = "DNS TCP for updates"
-    from_port   = 53
-    to_port     = 53
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
-    description = "DNS UDP for updates"
-    from_port   = 53
-    to_port     = 53
-    protocol    = "udp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  tags = {
-    Name = var.name
-  }
-
-  lifecycle {
-    create_before_destroy = true
-  }
-}
+# resource "aws_security_group" "allow_software_updates" {
+#   name        = var.name
+#   description = "Allow software updates"
+# 
+#   egress {
+#     description = "HTTPS for updates"
+#     from_port   = 443
+#     to_port     = 443
+#     protocol    = "tcp"
+#     cidr_blocks = ["0.0.0.0/0"]
+#   }
+# 
+#   egress {
+#     description = "DNS TCP for updates"
+#     from_port   = 53
+#     to_port     = 53
+#     protocol    = "tcp"
+#     cidr_blocks = ["0.0.0.0/0"]
+#   }
+# 
+#   egress {
+#     description = "DNS UDP for updates"
+#     from_port   = 53
+#     to_port     = 53
+#     protocol    = "udp"
+#     cidr_blocks = ["0.0.0.0/0"]
+#   }
+# 
+#   tags = {
+#     Name = var.name
+#   }
+# 
+#   lifecycle {
+#     create_before_destroy = true
+#   }
+# }
 
 resource "aws_security_group" "allow_web_traffic" {
-  name        = var.web_sg_name
+  name        = var.name
   description = "Allow web traffic"
 
   ingress {

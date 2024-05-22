@@ -40,8 +40,3 @@ variable "tags" {
   default     = {}
 }
 
-variable "web_sg_name" {
-  type        = string
-  description = "The web security group name"
-  default     = "allow_web_traffic_sg"
-}
