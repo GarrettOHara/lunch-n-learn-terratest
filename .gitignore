@@ -8,18 +8,15 @@
 *.tfplan
 *.external_modules/
 
-# Python ignore
-__pycache__/
-
-# VS Code ignore
-.vscode/*
-
 # Infracost
 manifest.json
 .infracost
 
 # Ignore server logs
-*.log
+**/*.log
+
+# Ignore SQL Lite
+**/*.db
 
 # Ignore VS Code
 **/.vscode/
