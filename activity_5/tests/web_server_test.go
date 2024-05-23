@@ -3,8 +3,9 @@ package test
 import (
 	"fmt"
 	"testing"
+    "net/http"
+    "io"
 
-	"github.com/gruntwork-io/terratest/modules/aws"
 	"github.com/gruntwork-io/terratest/modules/random"
 	"github.com/gruntwork-io/terratest/modules/terraform"
 	test_structure "github.com/gruntwork-io/terratest/modules/test-structure"
@@ -12,6 +13,8 @@ import (
 )
 
 func TestWebServer(t *testing.T) {
+    // Allow test to run in parrallel with other tests
+    t.Parallel()
 	// Generate a 6-character random string
 	randomID := random.UniqueId()
 	// Use the random ID and terratest prefix to generate a random name
@@ -47,4 +50,30 @@ func TestWebServer(t *testing.T) {
 	assert.NotEmpty(t, instance_id, "instance_id should not be empty")
 	assert.NotEmpty(t, public_ipv4, "public_ipv4 should not be empty")
 	assert.NotEmpty(t, public_dns, "public_dns should not be empty")
+
+
+    // Send GET request
+    resp, err := http.Get(public_dns)
+    if err != nil {
+        fmt.Println("Error:", err)
+        return
+    }
+    defer resp.Body.Close()
+
+    // Check response status code
+    if resp.StatusCode != http.StatusOK {
+        fmt.Println("Unexpected status code:", resp.StatusCode)
+        return
+    }
+
+    // Read response body
+    body, err := io.ReadAll(resp.Body)
+    if err != nil {
+        fmt.Println("Error reading response body:", err)
+        return
+    }
+
+    // Print response body
+    fmt.Println("Response body:")
+    fmt.Println(string(body))
 }

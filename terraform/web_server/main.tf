@@ -15,7 +15,6 @@ resource "aws_instance" "this" {
   user_data                   = data.template_file.user_data_template.rendered
   user_data_replace_on_change = true
   vpc_security_group_ids = [
-    aws_security_group.allow_software_updates.id,
     aws_security_group.allow_web_traffic.id
   ]
 

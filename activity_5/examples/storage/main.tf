@@ -1,5 +1,5 @@
 module "s3_bucket" {
-  source              = "../../../terraform/storage/"
+  source              = "git::https://github.com/garrettohara/lunch-n-learn-terratest.git//terraform/storage?ref=main" # "../../../terraform/storage"
   name                = var.name
   static_website      = true
   static_website_CIDR = var.static_website_CIDR

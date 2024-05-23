@@ -21,7 +21,7 @@ func TestS3Bucket(t *testing.T) {
 	//
 	// Enables us to deploy multiple clusters from the same root-level
 	// configuration with different parameters in parallel.
-	workingDir := test_structure.CopyTerraformFolderToTemp(t, "..", "examples/complete")
+	workingDir := test_structure.CopyTerraformFolderToTemp(t, "..", "examples/storage")
 
     defer test_structure.RunTestStage(t, "destroy_infrastructure", func() {
 		DestroyInfrastructure(t, workingDir)

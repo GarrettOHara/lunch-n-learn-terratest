@@ -1,5 +1,5 @@
 module "web_server" {
-  source = "../../../terraform/web_server/"
+  source = "git::https://github.com/garrettohara/lunch-n-learn-terratest.git//terraform/web_server?ref=main" # "../../../terraform/web_server/"
   name   = var.name
 
   cidr_blocks = [
