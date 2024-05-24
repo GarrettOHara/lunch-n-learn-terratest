@@ -2,9 +2,10 @@ package test
 
 import (
 	"fmt"
-	"testing"
-    "net/http"
     "io"
+    "net/http"
+    "strings"
+	"testing"
 
     "github.com/gruntwork-io/terratest/modules/random"
 	"github.com/gruntwork-io/terratest/modules/terraform"
@@ -42,7 +43,7 @@ func TestS3Bucket(t *testing.T) {
 // The function then deploys the infrastructure.
 func DeployInfrastructure(t *testing.T, workingDir string) {
 	// Generate a 6-character random string
-	randomID := random.UniqueId()
+	randomID := strings.ToLower(random.UniqueId())
 	// Use the random ID and terratest prefix to generate a random name
 	name := fmt.Sprintf("terratest-%s", randomID)
 
