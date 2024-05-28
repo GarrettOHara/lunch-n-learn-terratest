@@ -3,6 +3,7 @@ package test
 import (
 	"fmt"
 	"testing"
+    "strings"
 
 	"github.com/gruntwork-io/terratest/modules/random"
 	"github.com/gruntwork-io/terratest/modules/terraform"
@@ -12,7 +13,7 @@ import (
 
 func TestS3Bucket(t *testing.T) {
 	// Generate a 6-character random string
-	randomID := random.UniqueId()
+	randomID := strings.ToLower(random.UniqueId())
 
 	// Use the random ID and terratest prefix to generate a random name
 	name := fmt.Sprintf("terratest-%s", randomID)
@@ -59,8 +60,8 @@ func TestS3Bucket(t *testing.T) {
 	terraform.InitAndApply(t, terraformOptions)
 
 	// This will run `terraform output <VALUE>` to get the value of the specified output
-	s3BucketARN := terraform.Output(t, terraformOptions, "s3_bucket_arn")
+	s3BucketId := terraform.Output(t, terraformOptions, "s3_bucket_id")
 
 	// Assert that the ARN is not an empty string
-	assert.NotEmpty(t, s3BucketARN, "S3 bucket ARN should not be empty")
+	assert.NotEmpty(t, s3BucketId, "S3 bucket ARN should not be empty")
 }
