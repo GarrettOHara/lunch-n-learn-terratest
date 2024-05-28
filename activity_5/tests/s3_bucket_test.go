@@ -63,7 +63,7 @@ func DeployInfrastructure(t *testing.T, workingDir string) {
 		},
 		NoColor: true,
 	})
-    // Save the options and key for later test stages to use
+	// Save the options and key for later test stages to use
 	test_structure.SaveTerraformOptions(t, workingDir, terraformOptions)
 
 	// run "terraform apply"
@@ -91,7 +91,7 @@ func StaticWebsiteResponse(t *testing.T, workingDir string) {
 	assert.NotEmpty(t, s3StaticSiteURL, "S3 static website endpoint should not be empty")
 
 	// Send GET request
-    resp, err := http.Get("http://"+s3StaticSiteURL)
+	resp, err := http.Get("http://" + s3StaticSiteURL)
 	if err != nil {
 		fmt.Println("Error:", err)
 		return
@@ -110,15 +110,15 @@ func StaticWebsiteResponse(t *testing.T, workingDir string) {
 		fmt.Println("Error reading response body:", err)
 		return
 	}
-    fmt.Printf("Server response code: %d\n", resp.StatusCode)
+	fmt.Printf("Server response code: %d\n", resp.StatusCode)
 	fmt.Println("Response from server:")
 	fmt.Println(string(body))
-    serverResponse := strings.ReplaceAll(string(body), "\n", "")
-    serverResponse = strings.ReplaceAll(serverResponse, " ", "")
-    expectedHTML := `<html><body><p>OK</p></body></html>`
+	serverResponse := strings.ReplaceAll(string(body), "\n", "")
+	serverResponse = strings.ReplaceAll(serverResponse, " ", "")
+	expectedHTML := `<html><body><p>OK</p></body></html>`
 
-    assert.Equal(t, resp.StatusCode, http.StatusOK, "The response from the server was not 200.")
-    assert.Equal(t, serverResponse, expectedHTML, "The response from the server did not match the expected result.")
+	assert.Equal(t, resp.StatusCode, http.StatusOK, "The response from the server was not 200.")
+	assert.Equal(t, serverResponse, expectedHTML, "The response from the server did not match the expected result.")
 }
 
 // Stage 4: DestroyInfrastructure

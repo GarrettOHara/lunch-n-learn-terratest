@@ -2,13 +2,13 @@ package test
 
 import (
 	"fmt"
-    "io"
-    "net/http"
-    "strings"
+	"io"
+	"net/http"
+	"strings"
 	"testing"
-    "time"
+	"time"
 
-    "github.com/aws/aws-sdk-go/service/ec2"
+	"github.com/aws/aws-sdk-go/service/ec2"
 	"github.com/gruntwork-io/terratest/modules/aws"
 
 	"github.com/gruntwork-io/terratest/modules/random"
@@ -24,27 +24,27 @@ func check(e error) {
 }
 
 func checkEc2Instance(awsRegion string, instanceId string) string {
-    fmt.Println("Inside checkEc2Instance")
-    session, err := aws.NewAuthenticatedSession(awsRegion)
-    check(err)
-    client := ec2.New(session)
+	fmt.Println("Inside checkEc2Instance")
+	session, err := aws.NewAuthenticatedSession(awsRegion)
+	check(err)
+	client := ec2.New(session)
 
-    request := ec2.DescribeInstanceStatusInput{
-        InstanceIds: []*string{&instanceId},
-    }
-    result, err := client.DescribeInstanceStatus(&request)
-    check(err)
-    for _, instanceStatus := range result.InstanceStatuses {
-        fmt.Println("Instance ID:", *instanceStatus.InstanceId)
-        fmt.Println("Instance Status:", *instanceStatus.InstanceState.Name)
-        return *instanceStatus.InstanceState.Name
-    }
-    return ""
+	request := ec2.DescribeInstanceStatusInput{
+		InstanceIds: []*string{&instanceId},
+	}
+	result, err := client.DescribeInstanceStatus(&request)
+	check(err)
+	for _, instanceStatus := range result.InstanceStatuses {
+		fmt.Println("Instance ID:", *instanceStatus.InstanceId)
+		fmt.Println("Instance Status:", *instanceStatus.InstanceState.Name)
+		return *instanceStatus.InstanceState.Name
+	}
+	return ""
 }
 
 func TestWebServer(t *testing.T) {
-    // Allow test to run in parrallel with other tests
-    t.Parallel()
+	// Allow test to run in parrallel with other tests
+	t.Parallel()
 	// Generate a 6-character random string
 	randomID := strings.ToLower(random.UniqueId())
 	// Use the random ID and terratest prefix to generate a random name
@@ -76,46 +76,46 @@ func TestWebServer(t *testing.T) {
 	public_ipv4 := terraform.Output(t, terraformOptions, "public_ipv4_addr")
 	public_dns := terraform.Output(t, terraformOptions, "public_dns")
 
-    // Ensure outputs are all non-empty
+	// Ensure outputs are all non-empty
 	assert.NotEmpty(t, instance_id, "instance_id should not be empty")
 	assert.NotEmpty(t, public_ipv4, "public_ipv4 should not be empty")
 	assert.NotEmpty(t, public_dns, "public_dns should not be empty")
 
-    // Wait for EC2 instance to become available
-    // for {
-    //     status := checkEc2Instance("us-west-1", instance_id)
-    //     if status == "running" {
-    //         break
-    //     } else {
-    //         time.Sleep(10 * time.Second)
-    //         fmt.Println("Waiting for web server to come online...")
-    //     }
-    // }
-    fmt.Println("Waiting 5 minutes for web server to come online...")
-    time.Sleep(300 * time.Second)
+	// Wait for EC2 instance to become available
+	// for {
+	//     status := checkEc2Instance("us-west-1", instance_id)
+	//     if status == "running" {
+	//         break
+	//     } else {
+	//         time.Sleep(10 * time.Second)
+	//         fmt.Println("Waiting for web server to come online...")
+	//     }
+	// }
+	fmt.Println("Waiting 5 minutes for web server to come online...")
+	time.Sleep(300 * time.Second)
 
-    // Send GET request to API
-    resp, err := http.Get("http://"+public_dns)
-    if err != nil {
-        fmt.Println("Error:", err)
-        return
-    }
-    defer resp.Body.Close()
+	// Send GET request to API
+	resp, err := http.Get("http://" + public_dns)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+	defer resp.Body.Close()
 
-    // Check response status code
-    if resp.StatusCode != http.StatusOK {
-        fmt.Println("Unexpected status code:", resp.StatusCode)
-        return
-    }
+	// Check response status code
+	if resp.StatusCode != http.StatusOK {
+		fmt.Println("Unexpected status code:", resp.StatusCode)
+		return
+	}
 
-    // Read response body
-    body, err := io.ReadAll(resp.Body)
-    if err != nil {
-        fmt.Println("Error reading response body:", err)
-        return
-    }
+	// Read response body
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		fmt.Println("Error reading response body:", err)
+		return
+	}
 
-    // Print response body
-    fmt.Println("Response body:")
-    fmt.Println(string(body))
+	// Print response body
+	fmt.Println("Response body:")
+	fmt.Println(string(body))
 }
