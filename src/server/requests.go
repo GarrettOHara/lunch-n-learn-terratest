@@ -155,7 +155,7 @@ func queryChatBotPost(w http.ResponseWriter, req *http.Request, db *sql.DB) {
 		return
 	}
 
-    // Response back to the client request
+	// Response back to the client request
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	_, err = w.Write(jsonData)

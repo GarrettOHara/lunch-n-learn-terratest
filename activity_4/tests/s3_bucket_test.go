@@ -2,8 +2,8 @@ package test
 
 import (
 	"fmt"
+	"strings"
 	"testing"
-    "strings"
 
 	"github.com/gruntwork-io/terratest/modules/random"
 	"github.com/gruntwork-io/terratest/modules/terraform"
