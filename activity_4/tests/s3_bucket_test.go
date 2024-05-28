@@ -5,6 +5,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/gruntwork-io/terratest/modules/aws"
 	"github.com/gruntwork-io/terratest/modules/random"
 	"github.com/gruntwork-io/terratest/modules/terraform"
 	test_structure "github.com/gruntwork-io/terratest/modules/test-structure"
@@ -17,6 +18,8 @@ func TestS3Bucket(t *testing.T) {
 
 	// Use the random ID and terratest prefix to generate a random name
 	name := fmt.Sprintf("terratest-%s", randomID)
+    // Get random AWS region
+    awsRegion := aws.GetRandomStableRegion(t, []string{"us-east-2", "us-west-1", "us-west-2", "eu-west-1"}, nil)
 
 	// Use the CopyTerraformFolderToTemp function to generate a randomly
 	// named directory for holding the root-level module/state.
@@ -28,7 +31,7 @@ func TestS3Bucket(t *testing.T) {
 	// t.Name() returns the name of the currently running test
 	testName := t.Name()
 	// Interpolate S3 bucket name for BackendConfig
-	bucketName := fmt.Sprintf("terratest-lunch-n-learn/%s/us-west-1/%s.tfstate", testName, name)
+	bucketName := fmt.Sprintf("terratest-lunch-n-learn/%s/%s/%s.tfstate", testName, awsRegion, name)
 
 	// Full terraform.Options struct:
 	// https://github.com/gruntwork-io/terratest/blob/64a1856f2695fe1c24658fe8fc66090e83c7a530/modules/terraform/options.go#L39-L74
@@ -38,6 +41,7 @@ func TestS3Bucket(t *testing.T) {
 		TerraformDir: workingDir,
 		BackendConfig: map[string]interface{}{
 			"key": bucketName,
+            "region": awsRegion,
 		},
 		Vars: map[string]interface{}{
 			"name": name,

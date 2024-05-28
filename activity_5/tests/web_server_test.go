@@ -49,6 +49,8 @@ func TestWebServer(t *testing.T) {
 	randomID := strings.ToLower(random.UniqueId())
 	// Use the random ID and terratest prefix to generate a random name
 	name := fmt.Sprintf("terratest-%s", randomID)
+    // Get random AWS region
+    awsRegion := aws.GetRandomStableRegion(t, []string{"us-east-2", "us-west-1", "us-west-2", "eu-west-1"}, nil)
 
 	// Use the CopyTerraformFolderToTemp function to generate a randomly
 	// named directory for holding the root-level module/state.
@@ -58,7 +60,7 @@ func TestWebServer(t *testing.T) {
 	workingDir := test_structure.CopyTerraformFolderToTemp(t, "..", "examples/web_server")
 
 	testName := t.Name()
-	bucketName := fmt.Sprintf("terratest-lunch-n-learn/%s/us-west-1/%s.tfstate", testName, name)
+	bucketName := fmt.Sprintf("terratest-lunch-n-learn/%s/%s/%s.tfstate", testName, awsRegion, name)
 	terraformOptions := terraform.WithDefaultRetryableErrors(t, &terraform.Options{
 		TerraformDir: workingDir,
 		BackendConfig: map[string]interface{}{
@@ -66,6 +68,7 @@ func TestWebServer(t *testing.T) {
 		},
 		Vars: map[string]interface{}{
 			"name": name,
+            "region": awsRegion,
 		},
 		NoColor: true,
 	})

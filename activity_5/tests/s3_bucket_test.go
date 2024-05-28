@@ -7,7 +7,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/gruntwork-io/terratest/modules/random"
+	"github.com/gruntwork-io/terratest/modules/aws"
+    "github.com/gruntwork-io/terratest/modules/random"
 	"github.com/gruntwork-io/terratest/modules/terraform"
 	test_structure "github.com/gruntwork-io/terratest/modules/test-structure"
 	"github.com/stretchr/testify/assert"
@@ -50,9 +51,11 @@ func DeployInfrastructure(t *testing.T, workingDir string) {
 	randomID := strings.ToLower(random.UniqueId())
 	// Use the random ID and terratest prefix to generate a random name
 	name := fmt.Sprintf("terratest-%s", randomID)
+    // Get random AWS region
+    awsRegion := aws.GetRandomStableRegion(t, []string{"us-east-2", "us-west-1", "us-west-2", "eu-west-1"}, nil)
 
 	testName := t.Name()
-	bucketName := fmt.Sprintf("terratest-lunch-n-learn/%s/us-west-1/%s.tfstate", testName, name)
+	bucketName := fmt.Sprintf("terratest-lunch-n-learn/%s/%s/%s.tfstate", testName, awsRegion, name)
 	terraformOptions := terraform.WithDefaultRetryableErrors(t, &terraform.Options{
 		TerraformDir: workingDir,
 		BackendConfig: map[string]interface{}{
@@ -60,10 +63,11 @@ func DeployInfrastructure(t *testing.T, workingDir string) {
 		},
 		Vars: map[string]interface{}{
 			"name": name,
+            "region": awsRegion,
 		},
 		NoColor: true,
 	})
-	// Save the options and key for later test stages to use
+	// **IMPORTANT** Save the options and key for later test stages to use
 	test_structure.SaveTerraformOptions(t, workingDir, terraformOptions)
 
 	// run "terraform apply"
