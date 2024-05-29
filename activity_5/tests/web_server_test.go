@@ -81,9 +81,11 @@ func TestWebServer(t *testing.T) {
 		return
 	}
 
+	serverResponse := strings.ReplaceAll(string(body), "\n", "")
+	serverResponse = strings.ReplaceAll(serverResponse, " ", "")
     fmt.Printf("Response status code: %d\n", resp.StatusCode)
-	fmt.Printf("Response body:\n%s\n", string(body))
+	fmt.Printf("Response body:\n%s\n", serverResponse)
 
     // Test server response
-    assert.Equal(t, string(body), "OK", "The server sent an unexpected response.")
+    assert.Equal(t, serverResponse, "OK", "The server sent an unexpected response.")
 }
