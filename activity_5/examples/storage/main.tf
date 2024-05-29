@@ -1,6 +1,7 @@
 module "s3_bucket" {
-  source              = "git::https://github.com/garrettohara/lunch-n-learn-terratest.git//terraform/storage?ref=main" # "../../../terraform/storage"
+  source              = "git::https://github.com/garrettohara/lunch-n-learn-terratest.git//terraform/storage?ref=main"
   name                = var.name
+  region              = var.region
   static_website      = true
   static_website_CIDR = var.static_website_CIDR
 }
@@ -20,6 +21,12 @@ variable "name" {
   type        = string
   description = "The name of the project."
   default     = "super-cool-bucket"
+}
+
+variable "region" {
+  type        = string
+  description = "The AWS Region"
+  default     = "us-west-1"
 }
 
 variable "static_website_CIDR" {

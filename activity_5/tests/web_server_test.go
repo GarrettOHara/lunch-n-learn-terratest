@@ -8,39 +8,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/aws/aws-sdk-go/service/ec2"
 	"github.com/gruntwork-io/terratest/modules/aws"
-
 	"github.com/gruntwork-io/terratest/modules/random"
 	"github.com/gruntwork-io/terratest/modules/terraform"
 	test_structure "github.com/gruntwork-io/terratest/modules/test-structure"
 	"github.com/stretchr/testify/assert"
 )
-
-func check(e error) {
-	if e != nil {
-		panic(e)
-	}
-}
-
-func checkEc2Instance(awsRegion string, instanceId string) string {
-	fmt.Println("Inside checkEc2Instance")
-	session, err := aws.NewAuthenticatedSession(awsRegion)
-	check(err)
-	client := ec2.New(session)
-
-	request := ec2.DescribeInstanceStatusInput{
-		InstanceIds: []*string{&instanceId},
-	}
-	result, err := client.DescribeInstanceStatus(&request)
-	check(err)
-	for _, instanceStatus := range result.InstanceStatuses {
-		fmt.Println("Instance ID:", *instanceStatus.InstanceId)
-		fmt.Println("Instance Status:", *instanceStatus.InstanceState.Name)
-		return *instanceStatus.InstanceState.Name
-	}
-	return ""
-}
 
 func TestWebServer(t *testing.T) {
 	// Allow test to run in parrallel with other tests
@@ -50,7 +23,7 @@ func TestWebServer(t *testing.T) {
 	// Use the random ID and terratest prefix to generate a random name
 	name := fmt.Sprintf("terratest-%s", randomID)
     // Get random AWS region
-    awsRegion := aws.GetRandomStableRegion(t, []string{"us-east-2", "us-west-1", "us-west-2", "eu-west-1"}, nil)
+    awsRegion := aws.GetRandomStableRegion(t, []string{"us-west-1", "us-west-2", "eu-west-1"}, nil)
 
 	// Use the CopyTerraformFolderToTemp function to generate a randomly
 	// named directory for holding the root-level module/state.
@@ -84,18 +57,8 @@ func TestWebServer(t *testing.T) {
 	assert.NotEmpty(t, public_ipv4, "public_ipv4 should not be empty")
 	assert.NotEmpty(t, public_dns, "public_dns should not be empty")
 
-	// Wait for EC2 instance to become available
-	// for {
-	//     status := checkEc2Instance("us-west-1", instance_id)
-	//     if status == "running" {
-	//         break
-	//     } else {
-	//         time.Sleep(10 * time.Second)
-	//         fmt.Println("Waiting for web server to come online...")
-	//     }
-	// }
-	fmt.Println("Waiting 5 minutes for web server to come online...")
-	time.Sleep(300 * time.Second)
+	fmt.Println("Waiting 2 minutes for web server to come online...")
+	time.Sleep(120 * time.Second)
 
 	// Send GET request to API
 	resp, err := http.Get("http://" + public_dns)
@@ -118,7 +81,9 @@ func TestWebServer(t *testing.T) {
 		return
 	}
 
-	// Print response body
-	fmt.Println("Response body:")
-	fmt.Println(string(body))
+    fmt.Printf("Response status code: %d\n", resp.StatusCode)
+	fmt.Printf("Response body:\n%s\n", string(body))
+
+    // Test server response
+    assert.Equal(t, string(body), "OK", "The server sent an unexpected response.")
 }

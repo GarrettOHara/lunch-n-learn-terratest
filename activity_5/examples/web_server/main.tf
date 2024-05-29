@@ -1,6 +1,7 @@
 module "web_server" {
   source = "git::https://github.com/garrettohara/lunch-n-learn-terratest.git//terraform/web_server?ref=main" # "../../../terraform/web_server/"
   name   = var.name
+  region = var.region
 
   cidr_blocks = [
     "165.1.165.11/32",   # My VPN IP
@@ -20,6 +21,12 @@ variable "name" {
   type        = string
   description = "The name of the project."
   default     = "super-cool-web-server"
+}
+
+variable "region" {
+  type        = string
+  description = "The AWS Region"
+  default     = "us-west-1"
 }
 
 output "instance_id" {
