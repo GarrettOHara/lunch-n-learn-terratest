@@ -4,22 +4,62 @@
 
 - Install Terraform: https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli
 - Install Golang: https://go.dev/doc/install
-
+- Clone the lunch-n-learn-terratest repo:
+  ```bash
+  git clone https://github.com/garrettohara/lunch-n-learn-terratest/
+  ```
 
 ## History of Go
 
+Go was created in 2007 to solve some problems Google was having developing software
+infrastructure.
+
+![Google!](./images/google.gif =x200)
+
+Modern computing innovations like multicore processors, networked systems, and massive
+computation clusters, introduced problems that were not around when languages like
+C++(1979), Java(1995), and Python(1991), had been created.
+
+![Programming Languages](./images/programming_languages_cropped.gif =x250)
+
+Large scale systems at Google containing 10+ million lines of code were working around
+these problems instead of addressing them head on. Some of the specific problems they
+encountered were:
+
+![Tom Building](./images/tom-and-jerry-preparing.gif =x150)
+
+- Slow builds
+    - Build times ranging from 30+ minutes to multiple hours
+- Dependency issues
+    - Non versioned libraries
+    - Version Skew between systems
+- Developing readable/maintainable software for large software systems
+    - C++/Java can be difficult to read/maintain
+    - Python/Haskell can produce tricky bugs to identify like indentation
+    errors when embedded within other languages
+
+Go was designed with these computing paradigms in mind, allowing development to be
+more productive/efficient. Go has native and robust concurrency, efficient garbage
+collection, and strict dependency management.
+
 Go attempts to combine the ease of programming of an interpreted, dynamically typed 
-language with the efficiency and safety of a statically typed, compiled language. 
-It also aimed to be better adapted to current hardware, with support for networked 
-and multicore computing. Finally, working with Go is intended to be fast: it should 
-take at most a few seconds to build a large executable on a single computer.
+language with the efficiency and safety of a statically typed, compiled language.
+
+![Efficient](./images/penguin-productive.gif =x200)
+
+Go aims to:
+- More adapted to to current hardware/computing paradigms
+- Be fast: it should take at most a few seconds to build a large executable on a single computer
+- Provide support read, debug, maintain, and scale systems
 
 ![Go Gopher](./images/go-gopher.jpeg)
 
-## Golang Introduction
+#### Why Go?
+
+## Activity 1: Go Introduction
 
 Basic program in Go: [source](https://www.digitalocean.com/community/tutorials/how-to-write-your-first-program-in-go)
-```Golang
+```Go
 package main
 
 import "fmt"
@@ -45,8 +85,8 @@ Let's analyze the components:
     - Every .go file that you write should begin with a package
     - Can only have **1** package per directory.
 - We are importing `fmt`, a package in the Go standard library
-    - > Package fmt implements formatted I/O with functions analogous to C's 
-    printf and scanf. The format 'verbs' are derived from C's but are simpler.
+    - > Package `fmt` implements formatted I/O with functions analogous to C's 
+    `printf` and `scanf`. The format 'verbs' are derived from C's but are simpler.
     - Library docs: https://pkg.go.dev/fmt
 - `&` the *ampersand* Gets/returns the memory address of a variable
     - In this instance, we reference the memory address of `name`
