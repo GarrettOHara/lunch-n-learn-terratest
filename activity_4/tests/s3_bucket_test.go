@@ -31,7 +31,8 @@ func TestS3Bucket(t *testing.T) {
 	// t.Name() returns the name of the currently running test
 	testName := t.Name()
 	// Interpolate S3 bucket name for BackendConfig
-	bucketName := fmt.Sprintf("terratest-lunch-n-learn/%s/%s/%s.tfstate", testName, awsRegion, name)
+	bucketName := fmt.Sprintf("lunch-n-learn-terratest/%s/%s/%s.tfstate", testName, awsRegion, name)
+    fmt.Printf("Bucket Name: %s\n", bucketName)
 
 	// Full terraform.Options struct:
 	// https://github.com/gruntwork-io/terratest/blob/64a1856f2695fe1c24658fe8fc66090e83c7a530/modules/terraform/options.go#L39-L74
@@ -41,7 +42,6 @@ func TestS3Bucket(t *testing.T) {
 		TerraformDir: workingDir,
 		BackendConfig: map[string]interface{}{
 			"key": bucketName,
-            "region": awsRegion,
 		},
 		Vars: map[string]interface{}{
 			"name": name,

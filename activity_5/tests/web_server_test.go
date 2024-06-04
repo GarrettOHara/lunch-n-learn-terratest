@@ -33,7 +33,7 @@ func TestWebServer(t *testing.T) {
 	workingDir := test_structure.CopyTerraformFolderToTemp(t, "..", "examples/web_server")
 
 	testName := t.Name()
-	bucketName := fmt.Sprintf("terratest-lunch-n-learn/%s/%s/%s.tfstate", testName, awsRegion, name)
+	bucketName := fmt.Sprintf("lunch-n-learn-terratest/%s/%s/%s.tfstate", testName, awsRegion, name)
 	terraformOptions := terraform.WithDefaultRetryableErrors(t, &terraform.Options{
 		TerraformDir: workingDir,
 		BackendConfig: map[string]interface{}{
