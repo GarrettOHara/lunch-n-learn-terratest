@@ -10,7 +10,7 @@ import (
 	"github.com/gruntwork-io/terratest/modules/terraform"
 	test_structure "github.com/gruntwork-io/terratest/modules/test-structure"
 	// We need to import all used modules for Go to compile
-	"github.com/stretchr/testify/assert"
+	//"github.com/stretchr/testify/assert"
 )
 
 func TestBucket(t *testing.T) {
