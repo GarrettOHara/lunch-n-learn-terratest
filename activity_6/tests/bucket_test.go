@@ -1,16 +1,16 @@
 package test
 
 import (
-    "fmt"
+	"fmt"
 	"strings"
 	"testing"
 
 	"github.com/gruntwork-io/terratest/modules/aws"
-    "github.com/gruntwork-io/terratest/modules/random"
+	"github.com/gruntwork-io/terratest/modules/random"
 	"github.com/gruntwork-io/terratest/modules/terraform"
 	test_structure "github.com/gruntwork-io/terratest/modules/test-structure"
-    // We need to import all used modules for Go to compile
-    "github.com/stretchr/testify/assert"
+	// We need to import all used modules for Go to compile
+	"github.com/stretchr/testify/assert"
 )
 
 func TestBucket(t *testing.T) {
@@ -37,7 +37,7 @@ func TestBucket(t *testing.T) {
 func DeployInfrastructure(t *testing.T, workingDir string) {
 	randomID := strings.ToLower(random.UniqueId())
 	name := fmt.Sprintf("terratest-%s", randomID)
-    awsRegion := aws.GetRandomStableRegion(t, []string{"us-east-2", "us-west-1", "us-west-2", "eu-west-1"}, nil)
+	awsRegion := aws.GetRandomStableRegion(t, []string{"us-east-2", "us-west-1", "us-west-2", "eu-west-1"}, nil)
 
 	testName := t.Name()
 	bucketName := fmt.Sprintf("lunch-n-learn-terratest/%s/%s/%s.tfstate", testName, awsRegion, name)
@@ -47,12 +47,12 @@ func DeployInfrastructure(t *testing.T, workingDir string) {
 			"key": bucketName,
 		},
 		Vars: map[string]interface{}{
-			"name": name,
-            "region": awsRegion,
+			"name":   name,
+			"region": awsRegion,
 		},
 		NoColor: true,
 	})
-    // Save our Terraform Options struct to use in another stage
+	// Save our Terraform Options struct to use in another stage
 	// test_structure.SaveTerraformOptions(t, workingDir, terraformOptions)
 
 	fmt.Println("Running 'terraform init' and 'terraform apply'...")
@@ -65,7 +65,7 @@ func DeployInfrastructure(t *testing.T, workingDir string) {
 // and tests to see if its a non empty string which determines if the
 // S3 bucket exists.
 func S3BucketCheck(t *testing.T, workingDir string) {
-    // Load Terraform Options struct from Stage 1
+	// Load Terraform Options struct from Stage 1
 	terraformOptions := test_structure.LoadTerraformOptions(t, workingDir)
 	s3BucketId := terraform.Output(t, terraformOptions, "whats the output?")
 	assert.NotEmpty(t, s3BucketId, "S3 bucket ID should not be empty")

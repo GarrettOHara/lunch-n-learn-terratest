@@ -22,8 +22,8 @@ func TestWebServer(t *testing.T) {
 	randomID := strings.ToLower(random.UniqueId())
 	// Use the random ID and terratest prefix to generate a random name
 	name := fmt.Sprintf("terratest-%s", randomID)
-    // Get random AWS region
-    awsRegion := aws.GetRandomStableRegion(t, []string{"us-west-1", "us-west-2", "eu-west-1"}, nil)
+	// Get random AWS region
+	awsRegion := aws.GetRandomStableRegion(t, []string{"us-west-1", "us-west-2", "eu-west-1"}, nil)
 
 	// Use the CopyTerraformFolderToTemp function to generate a randomly
 	// named directory for holding the root-level module/state.
@@ -40,8 +40,8 @@ func TestWebServer(t *testing.T) {
 			"key": bucketName,
 		},
 		Vars: map[string]interface{}{
-			"name": name,
-            "region": awsRegion,
+			"name":   name,
+			"region": awsRegion,
 		},
 		NoColor: true,
 	})
@@ -83,9 +83,9 @@ func TestWebServer(t *testing.T) {
 
 	serverResponse := strings.ReplaceAll(string(body), "\n", "")
 	serverResponse = strings.ReplaceAll(serverResponse, " ", "")
-    fmt.Printf("Response status code: %d\n", resp.StatusCode)
+	fmt.Printf("Response status code: %d\n", resp.StatusCode)
 	fmt.Printf("Response body:\n%s\n", serverResponse)
 
-    // Test server response
-    assert.Equal(t, serverResponse, "OK", "The server sent an unexpected response.")
+	// Test server response
+	assert.Equal(t, serverResponse, "OK", "The server sent an unexpected response.")
 }

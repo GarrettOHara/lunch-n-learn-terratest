@@ -8,7 +8,7 @@ import (
 	"testing"
 
 	"github.com/gruntwork-io/terratest/modules/aws"
-    "github.com/gruntwork-io/terratest/modules/random"
+	"github.com/gruntwork-io/terratest/modules/random"
 	"github.com/gruntwork-io/terratest/modules/terraform"
 	test_structure "github.com/gruntwork-io/terratest/modules/test-structure"
 	"github.com/stretchr/testify/assert"
@@ -51,8 +51,8 @@ func DeployInfrastructure(t *testing.T, workingDir string) {
 	randomID := strings.ToLower(random.UniqueId())
 	// Use the random ID and terratest prefix to generate a random name
 	name := fmt.Sprintf("terratest-%s", randomID)
-    // Get random AWS region
-    awsRegion := aws.GetRandomStableRegion(t, []string{"us-east-2", "us-west-1", "us-west-2", "eu-west-1"}, nil)
+	// Get random AWS region
+	awsRegion := aws.GetRandomStableRegion(t, []string{"us-east-2", "us-west-1", "us-west-2", "eu-west-1"}, nil)
 
 	testName := t.Name()
 	bucketName := fmt.Sprintf("lunch-n-learn-terratest/%s/%s/%s.tfstate", testName, awsRegion, name)
@@ -62,8 +62,8 @@ func DeployInfrastructure(t *testing.T, workingDir string) {
 			"key": bucketName,
 		},
 		Vars: map[string]interface{}{
-			"name": name,
-            "region": awsRegion,
+			"name":   name,
+			"region": awsRegion,
 		},
 		NoColor: true,
 	})

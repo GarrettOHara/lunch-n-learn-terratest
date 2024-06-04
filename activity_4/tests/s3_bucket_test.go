@@ -18,8 +18,8 @@ func TestS3Bucket(t *testing.T) {
 
 	// Use the random ID and terratest prefix to generate a random name
 	name := fmt.Sprintf("terratest-%s", randomID)
-    // Get random AWS region
-    awsRegion := aws.GetRandomStableRegion(t, []string{"us-east-2", "us-west-1", "us-west-2", "eu-west-1"}, nil)
+	// Get random AWS region
+	awsRegion := aws.GetRandomStableRegion(t, []string{"us-east-2", "us-west-1", "us-west-2", "eu-west-1"}, nil)
 
 	// Use the CopyTerraformFolderToTemp function to generate a randomly
 	// named directory for holding the root-level module/state.
@@ -32,7 +32,7 @@ func TestS3Bucket(t *testing.T) {
 	testName := t.Name()
 	// Interpolate S3 bucket name for BackendConfig
 	bucketName := fmt.Sprintf("lunch-n-learn-terratest/%s/%s/%s.tfstate", testName, awsRegion, name)
-    fmt.Printf("Bucket Name: %s\n", bucketName)
+	fmt.Printf("Bucket Name: %s\n", bucketName)
 
 	// Full terraform.Options struct:
 	// https://github.com/gruntwork-io/terratest/blob/64a1856f2695fe1c24658fe8fc66090e83c7a530/modules/terraform/options.go#L39-L74
