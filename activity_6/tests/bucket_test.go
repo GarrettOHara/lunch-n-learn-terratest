@@ -10,7 +10,7 @@ import (
 	"github.com/gruntwork-io/terratest/modules/terraform"
 	test_structure "github.com/gruntwork-io/terratest/modules/test-structure"
 	// We need to import all used modules for Go to compile
-	//"github.com/stretchr/testify/assert"
+	// "github.com/stretchr/testify/assert"
 )
 
 func TestBucket(t *testing.T) {
@@ -53,7 +53,7 @@ func DeployInfrastructure(t *testing.T, workingDir string) {
 		NoColor: true,
 	})
 	// Save our Terraform Options struct to use in another stage
-	// test_structure.SaveTerraformOptions(t, workingDir, terraformOptions)
+	// ...
 
 	fmt.Println("Running 'terraform init' and 'terraform apply'...")
 	terraform.InitAndApply(t, terraformOptions)
