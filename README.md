@@ -2,12 +2,26 @@
 
 ## Pre-requisites
 
-- Install Terraform: https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli
-- Install Golang: https://go.dev/doc/install
-- Clone the lunch-n-learn-terratest repo:
-  ```bash
-  git clone https://github.com/garrettohara/lunch-n-learn-terratest/
-  ```
+Pre-requisites
+
+- Install `git`
+    - MacOS: https://git-scm.com/download/mac
+    - Windows: https://gitforwindows.org/
+    - Linux: https://git-scm.com/download/linux 
+
+- Install [Okta AWS](https://sportngin.atlassian.net/wiki/spaces/DEV/pages/828277137/AWS+-+API+Access+okta-aws#Setup)
+- Install [Terraform](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli)
+
+- Install tfenv: 
+    - MacOS: https://formulae.brew.sh/formula/tfenv 
+    - Windows/Linux (WSL is required): https://github.com/tfutils/tfenv?tab=readme-ov-file#manual 
+
+- Install [Go](https://go.dev/doc/install)
+
+Clone the lunch-n-learn-terratest repo:
+```bash
+git clone https://github.com/garrettohara/lunch-n-learn-terratest/
+```
 
 ## History of Go
 
