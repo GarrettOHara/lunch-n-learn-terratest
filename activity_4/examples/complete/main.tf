@@ -1,5 +1,5 @@
 module "s3_bucket" {
-  source = "git::https://github.com/garrettohara/lunch-n-learn-terratest.git//terraform/storage?ref=main" # "../../../terraform/storage"
+  source = "../../storage"
   name   = var.name
 }
 
