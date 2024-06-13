@@ -10,7 +10,7 @@ import (
 	"github.com/gruntwork-io/terratest/modules/terraform"
 	test_structure "github.com/gruntwork-io/terratest/modules/test-structure"
 	// We need to import all used modules for Go to compile
-    // What package are we missing?
+        // What package are we missing?
 )
 
 func TestBucket(t *testing.T) {
@@ -31,7 +31,7 @@ func TestBucket(t *testing.T) {
 }
 
 // Stage 1: DeployInfrastructure
-// This function copies the root level terraform module to an ephemeral directory
+// This function copies the root-level terraform module to an ephemeral directory
 // which becomes the working directory to deploy all Terraform resources from.
 // The function then deploys the infrastructure.
 func DeployInfrastructure(t *testing.T, workingDir string) {
@@ -62,7 +62,7 @@ func DeployInfrastructure(t *testing.T, workingDir string) {
 
 // Stage 2: S3BucketCheck
 // This function grabs the S3 Bucket ID from the module output
-// and tests to see if its a non empty string which determines if the
+// and tests to see if it's a non-empty string which determines if the
 // S3 bucket exists.
 func S3BucketCheck(t *testing.T, workingDir string) {
 	// Load Terraform Options struct from Stage 1
@@ -73,7 +73,7 @@ func S3BucketCheck(t *testing.T, workingDir string) {
 
 // Stage 3: DestroyInfrastructure
 // This function destroys all of the infrastructure that was deployed to conduct
-// the infrastrcture unit tests.
+// the infrastructure unit tests.
 func DestroyInfrastructure(t *testing.T, workingDir string) {
 	terraformOptions := test_structure.LoadTerraformOptions(t, workingDir)
 	fmt.Println("Destroying Terraform resources...")
