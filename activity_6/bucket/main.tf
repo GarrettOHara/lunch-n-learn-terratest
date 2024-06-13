@@ -6,7 +6,7 @@ resource "aws_s3_bucket" "this" {
   # checkov:skip=CKV_AWS_144: "Ensure that S3 bucket has cross-region replication enabled"
   # checkov:skip=CKV_AWS_145: "Ensure that S3 buckets are encrypted with KMS by default"
   # checkov:skip=CKV_AWS_186: No encryption needed for tests
-  bucket = "var.name fix me random_string.random.result"
+  bucket = "${var.name}-${random_string.random.result}"
 
   force_destroy = true
 }
