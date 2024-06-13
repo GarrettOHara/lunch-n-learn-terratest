@@ -2,9 +2,9 @@ BINARY_NAME=server
 
 build:
 	GOARCH=amd64 GOOS=darwin go build -o ${BINARY_NAME}-darwin-amd64
-	GOARCH=ard64 GOOS=darwin go build -o ${BINARY_NAME}-darwin-ard64
+	GOARCH=arm64 GOOS=darwin go build -o ${BINARY_NAME}-darwin-arm64
 	GOARCH=amd64 GOOS=linux go build -o ${BINARY_NAME}-linux
-	GOARCH=amd64 GOOS=windows go build -o ${BINARY_NAME}-windows
+	GOARCH=amd64 GOOS=windows go build -o ${BINARY_NAME}-windows.exe
 
 run: build
 	./${BINARY_NAME}-darwin
