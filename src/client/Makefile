@@ -11,9 +11,9 @@ run: build
 
 clean:
 	go clean
-	rm -f ${BINARY_NAME}-darwin
+	rm -f ${BINARY_NAME}-darwin*
 	rm -f ${BINARY_NAME}-linux
-	rm -f ${BINARY_NAME}-windows
+	rm -f ${BINARY_NAME}-windows.exe
 
 lint:
 	golangci-lint run --enable-all
